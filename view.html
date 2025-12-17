@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Paper | House of Questions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .fb-grid-1 { grid-template-columns: 1fr; }
+        .fb-grid-2 { grid-template-columns: 1fr 1fr; }
+        .image-overlay { background: rgba(0,0,0,0.6); }
+        #lightbox { display: none; }
+        .no-scroll { overflow: hidden; }
+        .active-like { color: #2563eb !important; }
+        .active-dislike { color: #dc2626 !important; }
+        #lightbox-img { transition: opacity 0.2s ease-in-out; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 pb-32">
+
+    <div id="lightbox" class="fixed inset-0 bg-black z-[100] flex flex-col">
+        <div class="p-4 flex justify-between items-center text-white bg-black/80 backdrop-blur-md z-[110]">
+            <span id="lightbox-counter" class="font-bold text-sm bg-white/20 px-3 py-1 rounded-full">1 / 1</span>
+            <button onclick="closeLightbox()" class="text-4xl p-2 hover:text-red-500 transition-colors">&times;</button>
+        </div>
+
+        <div class="flex-1 relative flex items-center justify-center bg-black overflow-hidden">
+            <button onclick="prevImg()" class="absolute left-0 top-0 bottom-0 w-1/4 flex items-center justify-start pl-4 group z-[110]">
+                <div class="bg-black/30 p-3 rounded-full group-active:bg-white/20 transition">
+                    <i class="fas fa-chevron-left text-white text-2xl"></i>
+                </div>
+            </button>
+
+            <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain">
+
+            <button onclick="nextImg()" class="absolute right-0 top-0 bottom-0 w-1/4 flex items-center justify-end pr-4 group z-[110]">
+                <div class="bg-black/30 p-3 rounded-full group-active:bg-white/20 transition">
+                    <i class="fas fa-chevron-right text-white text-2xl"></i>
+                </div>
+            </button>
+        </div>
+
+        <div class="p-4 bg-black/80 text-center text-white/40 text-[10px] font-bold uppercase tracking-widest pointer-events-none">
+            Tap sides to navigate pages
+        </div>
+    </div>
+
+    <nav class="bg-blue-700 text-white p-4 sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto flex items-center justify-between max-w-2xl">
+            <button onclick="window.location.href='index.html'" class="p-2 hover:bg-blue-800 rounded-full transition">
+                <i class="fa fa-arrow-left"></i>
+            </button>
+            <h1 id="paper-title" class="font-bold text-xs uppercase tracking-[0.15em] text-center flex-1">Loading Paper...</h1>
+            <button onclick="shareLink()" class="p-2 hover:bg-blue-800 rounded-full transition">
+                <i class="fa fa-share-alt"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-2xl mx-auto mt-6 px-4">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+            <div class="p-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-xl">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <div>
+                    <h2 id="subject-name-display" class="font-extrabold text-slate-800 text-lg leading-tight capitalize">Subject</h2>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] text-blue-600 uppercase font-extrabold tracking-widest">Official Exam Document</span>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span id="exam-type-display" class="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md font-bold border border-blue-100 uppercase">...</span>
+                            <span id="exam-year-display" class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-bold border border-slate-200 uppercase">...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="image-grid" onclick="openLightbox(0)" class="grid gap-1 bg-slate-200 min-h-[350px] relative cursor-pointer group">
+                <div class="animate-pulse flex items-center justify-center h-80 bg-slate-100 w-full">
+                    <i class="fas fa-circle-notch animate-spin text-blue-600 text-3xl"></i>
+                </div>
+            </div>
+
+            <div class="p-5 border-t border-slate-50 flex items-center justify-between">
+                <div class="flex items-center gap-6">
+                    <button id="likeBtn" onclick="handleLike()" class="flex items-center gap-2 text-slate-400 transition-all">
+                        <i class="fa-thumbs-up text-2xl far" id="like-icon"></i>
+                        <span id="like-count" class="font-bold text-lg">0</span>
+                    </button>
+                    <button id="dislikeBtn" onclick="handleDislike()" class="flex items-center gap-2 text-slate-400 transition-all">
+                        <i class="fa-thumbs-down text-2xl far" id="dislike-icon"></i>
+                        <span id="dislike-count" class="font-bold text-lg">0</span>
+                    </button>
+                </div>
+                <div class="text-[9px] text-slate-300 font-bold uppercase text-right leading-none">
+                    Powered By<br><span class="text-blue-500">House of Questions</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="related-section" class="hidden">
+            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 ml-2">Other years for this subject</h3>
+            <div id="related-papers-list" class="space-y-3"></div>
+        </div>
+    </main>
+
+    <div class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t p-4 flex justify-center z-40">
+        <button id="downloadBtn" class="bg-green-600 text-white px-12 py-4 rounded-2xl font-black flex items-center gap-3 shadow-xl shadow-green-200 active:scale-95 transition-all w-full max-w-sm justify-center">
+            <i class="fas fa-cloud-download-alt text-xl"></i> DOWNLOAD AS PDF
+        </button>
+    </div>
+
+    <script type="module">
+        import { db } from './config.js';
+        import { collection, query, where, getDocs, doc, updateDoc, increment, limit } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+
+        const params = new URLSearchParams(window.location.search);
+        const paperSlug = params.get('paper');
+        let currentDocId = "";
+        let images = [];
+        let currentIndex = 0;
+
+        async function loadPaper() {
+            if (!paperSlug || !db) return;
+            try {
+                const q = query(collection(db, "past_questions"), where("slug", "==", paperSlug));
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    const docSnap = querySnapshot.docs[0];
+                    const data = docSnap.data();
+                    currentDocId = docSnap.id;
+                    images = data.imageUrls || [];
+
+                    // 1. SAVE TO LAST SEEN (Logic for index.html)
+                    localStorage.setItem('hof_last_seen', JSON.stringify({
+                        slug: data.slug,
+                        subject: data.subject,
+                        year: data.year
+                    }));
+
+                    // 2. Update UI text
+                    document.getElementById('paper-title').innerText = `${data.subject} (${data.examType})`;
+                    document.getElementById('subject-name-display').innerText = data.subject;
+                    document.getElementById('exam-type-display').innerText = data.examType || "EXAM";
+                    document.getElementById('exam-year-display').innerText = data.year || "YEAR";
+                    document.getElementById('like-count').innerText = data.likes || 0;
+                    document.getElementById('dislike-count').innerText = data.dislikes || 0;
+
+                    resetUI();
+                    if (localStorage.getItem(`liked_${currentDocId}`)) setLikedUI();
+                    if (localStorage.getItem(`disliked_${currentDocId}`)) setDislikedUI();
+
+                    renderGrid(images);
+                    setupPDFDownload(images, `${data.subject}-${data.year}`);
+                    loadRelated(data.subject, currentDocId);
+                }
+            } catch (e) { console.error("Error loading paper:", e); }
+        }
+
+        async function loadRelated(subject, currentId) {
+            const list = document.getElementById('related-papers-list');
+            const section = document.getElementById('related-section');
+            const q = query(collection(db, "past_questions"), where("subject", "==", subject), limit(5));
+            const snapshot = await getDocs(q);
+            let count = 0;
+            list.innerHTML = "";
+
+            snapshot.forEach(doc => {
+                if (doc.id !== currentId) {
+                    const data = doc.data();
+                    count++;
+                    list.innerHTML += `
+                        <a href="view.html?paper=${data.slug}" class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-100 hover:border-blue-200 transition-all shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">${data.year}</div>
+                                <span class="font-bold text-slate-700 text-sm capitalize">${data.examType}</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-slate-300 text-xs"></i>
+                        </a>`;
+                }
+            });
+            if (count > 0) section.classList.remove('hidden');
+        }
+
+        // Like/Dislike System
+        window.handleLike = async () => {
+            if (!currentDocId || localStorage.getItem(`liked_${currentDocId}`)) return;
+            const hasDisliked = localStorage.getItem(`disliked_${currentDocId}`);
+            try {
+                const docRef = doc(db, "past_questions", currentDocId);
+                if (hasDisliked) {
+                    await updateDoc(docRef, { likes: increment(1), dislikes: increment(-1) });
+                    localStorage.removeItem(`disliked_${currentDocId}`);
+                } else {
+                    await updateDoc(docRef, { likes: increment(1) });
+                }
+                localStorage.setItem(`liked_${currentDocId}`, "true");
+                loadPaper();
+            } catch (e) { console.error(e); }
+        };
+
+        window.handleDislike = async () => {
+            if (!currentDocId || localStorage.getItem(`disliked_${currentDocId}`)) return;
+            const hasLiked = localStorage.getItem(`liked_${currentDocId}`);
+            try {
+                const docRef = doc(db, "past_questions", currentDocId);
+                if (hasLiked) {
+                    await updateDoc(docRef, { dislikes: increment(1), likes: increment(-1) });
+                    localStorage.removeItem(`liked_${currentDocId}`);
+                } else {
+                    await updateDoc(docRef, { dislikes: increment(1) });
+                }
+                localStorage.setItem(`disliked_${currentDocId}`, "true");
+                loadPaper();
+            } catch (e) { console.error(e); }
+        };
+
+        function resetUI() {
+            document.getElementById('like-icon').className = 'fa-thumbs-up text-2xl far';
+            document.getElementById('dislike-icon').className = 'fa-thumbs-down text-2xl far';
+            document.getElementById('likeBtn').className = 'flex items-center gap-2 text-slate-400 transition-all';
+            document.getElementById('dislikeBtn').className = 'flex items-center gap-2 text-slate-400 transition-all';
+        }
+
+        function setLikedUI() {
+            document.getElementById('like-icon').classList.replace('far', 'fas');
+            document.getElementById('likeBtn').classList.add('active-like');
+        }
+
+        function setDislikedUI() {
+            document.getElementById('dislike-icon').classList.replace('far', 'fas');
+            document.getElementById('dislikeBtn').classList.add('active-dislike');
+        }
+
+        // Grid Rendering
+        function renderGrid(urls) {
+            const grid = document.getElementById('image-grid');
+            if (urls.length === 0) {
+                grid.innerHTML = `<div class="p-20 text-slate-400 text-center">No images available</div>`;
+                return;
+            }
+            if (urls.length === 1) {
+                grid.className = "grid fb-grid-1";
+                grid.innerHTML = `<img src="${urls[0]}" class="w-full">`;
+            } else {
+                grid.className = "grid fb-grid-2";
+                grid.innerHTML = `<img src="${urls[0]}" class="w-full h-80 object-cover">
+                    <div class="relative h-80">
+                        <img src="${urls[1]}" class="w-full h-full object-cover">
+                        ${urls.length > 2 ? `<div class="absolute inset-0 image-overlay flex items-center justify-center text-white text-3xl font-bold">+${urls.length - 2}</div>` : ''}
+                    </div>`;
+            }
+        }
+
+        // PDF Generation
+        function setupPDFDownload(urls, filename) {
+            const btn = document.getElementById('downloadBtn');
+            btn.onclick = async () => {
+                const original = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> PREPARING PDF...`;
+                
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF();
+                
+                try {
+                    for (let i = 0; i < urls.length; i++) {
+                        const img = await loadImage(urls[i]);
+                        const props = pdf.getImageProperties(img);
+                        const w = pdf.internal.pageSize.getWidth();
+                        const h = (props.height * w) / props.width;
+                        if (i > 0) pdf.addPage();
+                        pdf.addImage(img, 'JPEG', 0, 0, w, h);
+                    }
+                    pdf.save(`${filename}.pdf`);
+                } catch (e) { 
+                    console.error(e);
+                    alert("Error generating PDF. Please check your internet connection."); 
+                }
+                btn.disabled = false;
+                btn.innerHTML = original;
+            };
+        }
+
+        function loadImage(url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = url;
+            });
+        }
+
+        // Lightbox Control
+        window.openLightbox = (i) => { 
+            if (images.length === 0) return;
+            currentIndex = i; 
+            updateLightbox(); 
+            document.getElementById('lightbox').style.display = 'flex'; 
+            document.body.classList.add('no-scroll'); 
+        };
+        window.closeLightbox = () => { 
+            document.getElementById('lightbox').style.display = 'none'; 
+            document.body.classList.remove('no-scroll'); 
+        };
+        window.nextImg = () => { 
+            currentIndex = (currentIndex + 1) % images.length; 
+            updateLightbox(); 
+        };
+        window.prevImg = () => { 
+            currentIndex = (currentIndex - 1 + images.length) % images.length; 
+            updateLightbox(); 
+        };
+        function updateLightbox() {
+            const lbImg = document.getElementById('lightbox-img');
+            lbImg.style.opacity = '0';
+            setTimeout(() => {
+                lbImg.src = images[currentIndex];
+                lbImg.style.opacity = '1';
+                document.getElementById('lightbox-counter').innerText = `${currentIndex + 1} / ${images.length}`;
+            }, 50);
+        }
+
+        window.shareLink = () => {
+            if (navigator.share) {
+                navigator.share({ 
+                    title: document.getElementById('paper-title').innerText,
+                    url: window.location.href 
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert("Link Copied to Clipboard!");
+            }
+        };
+
+        loadPaper();
+    </script>
+</body>
+</html>
