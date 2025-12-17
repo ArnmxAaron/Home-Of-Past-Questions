@@ -59,7 +59,7 @@
         <div class="container mx-auto px-6 text-center">
             <div class="flex items-center justify-center gap-3 mb-6">
                 <i class="fas fa-university text-yellow-400 text-3xl"></i>
-                <h1 class="text-1xl font-extrabold tracking-tight">House of <span class="text-yellow-400">Past Questions</span></h1>
+                <h1 class="text-1xl font-extrabold tracking-tight">House of Past <span class="text-yellow-400">Questions</span></h1>
             </div>
             
             <h2 class="text-3xl md:text-5xl font-black mb-2">Master Your Future</h2>
@@ -80,31 +80,49 @@
     </header>
 
     <section class="container mx-auto px-4 -mt-10 relative z-10">
-    <div class="bg-white rounded-[2rem] shadow-xl p-2.5 max-w-lg mx-auto border border-slate-100">
-        <div class="relative mb-2">
-            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-            <input type="text" id="subjectSearch" placeholder="Search biology, waec..." 
-                class="w-full pl-11 pr-4 py-2.5 rounded-xl border-none focus:ring-2 focus:ring-blue-500 text-base bg-slate-50 outline-none">
-        </div>
+        <div class="bg-white rounded-[2rem] shadow-xl p-2.5 max-w-lg mx-auto border border-slate-100">
+            <div class="relative mb-2">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="subjectSearch" placeholder="Search biology, waec..." 
+                    class="w-full pl-11 pr-4 py-2.5 rounded-xl border-none focus:ring-2 focus:ring-blue-500 text-base bg-slate-50 outline-none">
+            </div>
 
-        <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar px-2">
-            <span class="text-[8px] font-black text-slate-400 uppercase whitespace-nowrap mr-1">Filter:</span>
-            <button onclick="filterByYear('all')" id="pill-all" class="year-pill active-year !text-[9px] !px-3 !py-1">All</button>
-            <button onclick="filterByYear(2025)" class="year-pill !text-[9px] !px-3 !py-1">2025</button>
-            <button onclick="filterByYear(2024)" class="year-pill !text-[9px] !px-3 !py-1">2024</button>
-            <button onclick="filterByYear(2023)" class="year-pill !text-[9px] !px-3 !py-1">2023</button>
-            <button onclick="filterByYear(2022)" class="year-pill !text-[9px] !px-3 !py-1">2022</button>
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar px-2">
+                <span class="text-[8px] font-black text-slate-400 uppercase whitespace-nowrap mr-1">Filter:</span>
+                <button onclick="filterByYear('all')" id="pill-all" class="year-pill active-year !text-[9px] !px-3 !py-1">All</button>
+                <button onclick="filterByYear(2025)" class="year-pill !text-[9px] !px-3 !py-1">2025</button>
+                <button onclick="filterByYear(2024)" class="year-pill !text-[9px] !px-3 !py-1">2024</button>
+                <button onclick="filterByYear(2023)" class="year-pill !text-[9px] !px-3 !py-1">2023</button>
+                <button onclick="filterByYear(2022)" class="year-pill !text-[9px] !px-3 !py-1">2022</button>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
     <section id="last-seen-container" class="container mx-auto px-6 mt-10 hidden">
         <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Continue Reading</h3>
         <div id="last-seen-card"></div>
     </section>
 
-    <main class="container mx-auto px-4 py-12 max-w-6xl">
-        <div class="flex items-center justify-between mb-8 px-2">
+    <section class="container mx-auto px-6 mt-8">
+        <div class="flex items-center justify-between mb-4 px-1">
+            <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <span class="flex h-2 w-2 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                </span>
+                Trending Now
+            </h3>
+            <span class="text-[9px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full uppercase">Live</span>
+        </div>
+        
+        <div id="trending-grid" class="flex gap-4 overflow-x-auto pb-4 no-scrollbar -mx-2 px-2 snap-x snap-mandatory">
+            <div class="min-w-[170px] h-28 bg-slate-200 animate-pulse rounded-[2rem]"></div>
+            <div class="min-w-[170px] h-28 bg-slate-200 animate-pulse rounded-[2rem]"></div>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-4 py-8 max-w-6xl">
+        <div class="flex items-center justify-between mb-6 px-2">
             <h3 id="grid-title" class="text-sm font-black flex items-center gap-2 uppercase tracking-[0.2em] text-slate-500">
                 <i class="fas fa-stream text-blue-600"></i> Recent Papers
             </h3>
@@ -117,6 +135,7 @@
                 </button>
             </div>
         </div>
+        
         <div id="subject-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 transition-opacity duration-300">
             </div>
     </main>
@@ -157,7 +176,4 @@
         }
     </script>
 </body>
-
 </html>
-
-
