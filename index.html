@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="monetag" content="73a0188917524cc286330ff88f9f199f">
+        <meta name="monetag" content="73a0188917524cc286330ff88f9f199f">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>House of Past Questions | Study Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="manifest" href="manifest.json">
+    
+    <script src="https://alwingulla.com/88/pfe/current/tag.min.js?z=YOUR_ZONE_ID" data-cfasync="false" async></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
@@ -46,7 +49,30 @@
             100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
         }
     </style>
+
+    <script>
+        /**
+         * GLOBAL AD HELPER
+         * This function handles the interstitial ad logic. 
+         * It attempts to show the ad and then executes the callback (opening the paper).
+         */
+        window.showAdThenRun = function(callback) {
+            // Check for the Monetag function (Note: function name may vary based on your tag)
+            // If the ad script is blocked or fails, it skips directly to the content.
+            if (typeof show_8888888 === 'function') { 
+                show_8888888().then(() => {
+                    callback();
+                }).catch(e => {
+                    console.error("Ad failed:", e);
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        };
+    </script>
 </head>
+    <script>(function(s){s.dataset.zone='10338209',s.src='https://groleegni.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 <body class="bg-slate-50 text-slate-900 pb-32">
 
     <div class="bg-yellow-400 text-yellow-900 py-2 overflow-hidden relative border-b border-yellow-500 z-[60]">
@@ -138,7 +164,7 @@
         </div>
         
         <div id="subject-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 transition-opacity duration-300">
-            </div>
+        </div>
     </main>
 
     <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md h-16 nav-blur border border-slate-200 rounded-3xl shadow-2xl z-[999] flex items-center justify-around px-4">
@@ -167,9 +193,37 @@
             <span class="text-[8px] font-bold uppercase">Install</span>
         </button>
     </nav>
+    <div id="premium-modal" class="fixed inset-0 z-[1000] hidden">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closePremiumModal()"></div>
+    
+    <div id="premium-sheet" class="absolute bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] p-8 transform translate-y-full transition-transform duration-300 ease-out shadow-[0_-10px_40px_rgba(0,0,0,0.2)]">
+        <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8"></div>
+        
+        <div class="text-center">
+            <div class="w-20 h-20 bg-gradient-to-tr from-yellow-400 to-orange-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-orange-200 rotate-12">
+                <i class="fas fa-crown text-white text-3xl"></i>
+            </div>
+            
+            <h3 class="text-2xl font-black text-slate-800 mb-2">Premium Paper</h3>
+            <p class="text-slate-500 text-sm mb-8 px-4">Watch a short video to unlock <span class="font-bold text-slate-800">ALL premium content</span> for the next 24 hours.</p>
+            
+            <div class="space-y-3">
+                <button onclick="activatePremiumPass()" class="w-full bg-slate-900 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-transform">
+                    <i class="fas fa-play-circle text-yellow-400"></i>
+                    WATCH VIDEO & UNLOCK
+                </button>
+                
+                <button onclick="closePremiumModal()" class="w-full text-slate-400 font-bold py-3 text-xs uppercase tracking-widest">
+                    Maybe Later
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <script src="app.js" type="module"></script>
     <script>
+        // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').then(() => console.log("PWA Ready"));
@@ -178,4 +232,3 @@
     </script>
 </body>
 </html>
-
