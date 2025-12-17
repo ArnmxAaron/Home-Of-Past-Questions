@@ -137,14 +137,12 @@
                     currentDocId = docSnap.id;
                     images = data.imageUrls || [];
 
-                    // 1. SAVE TO LAST SEEN (Logic for index.html)
                     localStorage.setItem('hof_last_seen', JSON.stringify({
                         slug: data.slug,
                         subject: data.subject,
                         year: data.year
                     }));
 
-                    // 2. Update UI text
                     document.getElementById('paper-title').innerText = `${data.subject} (${data.examType})`;
                     document.getElementById('subject-name-display').innerText = data.subject;
                     document.getElementById('exam-type-display').innerText = data.examType || "EXAM";
@@ -238,7 +236,6 @@
             document.getElementById('dislikeBtn').classList.add('active-dislike');
         }
 
-        // Grid Rendering
         function renderGrid(urls) {
             const grid = document.getElementById('image-grid');
             if (urls.length === 0) {
@@ -258,33 +255,52 @@
             }
         }
 
-        // PDF Generation
+        // PDF Generation with Rewarded Ad Logic
         function setupPDFDownload(urls, filename) {
             const btn = document.getElementById('downloadBtn');
+            const adUrl = "https://otieu.com/4/10338294";
+
             btn.onclick = async () => {
-                const original = btn.innerHTML;
-                btn.disabled = true;
-                btn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> PREPARING PDF...`;
+                const originalContent = btn.innerHTML;
                 
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF();
+                // 1. Open Rewarded Ad in new tab
+                const adWindow = window.open(adUrl, '_blank');
                 
-                try {
-                    for (let i = 0; i < urls.length; i++) {
-                        const img = await loadImage(urls[i]);
-                        const props = pdf.getImageProperties(img);
-                        const w = pdf.internal.pageSize.getWidth();
-                        const h = (props.height * w) / props.width;
-                        if (i > 0) pdf.addPage();
-                        pdf.addImage(img, 'JPEG', 0, 0, w, h);
-                    }
-                    pdf.save(`${filename}.pdf`);
-                } catch (e) { 
-                    console.error(e);
-                    alert("Error generating PDF. Please check your internet connection."); 
+                if (!adWindow) {
+                    alert("Please allow popups to watch the ad and download.");
+                    return;
                 }
-                btn.disabled = false;
-                btn.innerHTML = original;
+
+                // 2. Change button state to "Verifying"
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> VERIFYING AD...`;
+
+                // 3. Wait for 6 seconds (Wait for user to view ad)
+                setTimeout(async () => {
+                    btn.innerHTML = `<i class="fas fa-cog animate-spin"></i> GENERATING PDF...`;
+                    
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF();
+                    
+                    try {
+                        for (let i = 0; i < urls.length; i++) {
+                            const img = await loadImage(urls[i]);
+                            const props = pdf.getImageProperties(img);
+                            const w = pdf.internal.pageSize.getWidth();
+                            const h = (props.height * w) / props.width;
+                            if (i > 0) pdf.addPage();
+                            pdf.addImage(img, 'JPEG', 0, 0, w, h);
+                        }
+                        pdf.save(`${filename}.pdf`);
+                    } catch (e) { 
+                        console.error(e);
+                        alert("Error generating PDF."); 
+                    }
+
+                    // 4. Reset button
+                    btn.disabled = false;
+                    btn.innerHTML = originalContent;
+                }, 6000); // 6 second delay
             };
         }
 
@@ -298,7 +314,6 @@
             });
         }
 
-        // Lightbox Control
         window.openLightbox = (i) => { 
             if (images.length === 0) return;
             currentIndex = i; 
@@ -344,4 +359,3 @@
     </script>
 </body>
 </html>
-
