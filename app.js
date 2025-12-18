@@ -1,5 +1,5 @@
-import { db } from './config.js';
-import { collection, onSnapshot, query, orderBy, limit, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+import { db, supabase } from './config.js';
+import { collection, onSnapshot, query, orderBy, limit, doc, updateDoc, increment, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
 // --- GLOBAL STATE ---
 let allPapers = [];
@@ -7,6 +7,7 @@ let currentPage = 0;
 let isFavoritesOnly = false;
 const itemsPerPage = 8;
 const REWARD_AD_URL = "https://otieu.com/4/10338215"; 
+const userId = localStorage.getItem('hof_userId');
 
 // --- ELEMENTS ---
 const grid = document.getElementById('subject-grid');
@@ -15,8 +16,130 @@ const searchInput = document.getElementById('subjectSearch');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const installBtn = document.getElementById('installBtn');
+const signupForm = document.getElementById('signup-form');
 
-// --- 1. PREMIUM & MODAL SYSTEM ---
+// --- 1. USER PROFILE & SESSION LOGIC ---
+
+async function initUserSession() {
+    // A. Check if user exists in LocalStorage
+    if (!userId) {
+        // Trigger signup popup after a short delay if no user found
+        setTimeout(() => window.openSignup(), 2000);
+        return;
+    }
+
+    try {
+        // B. Pull latest data from Firebase to ensure accuracy
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+            const userData = userSnap.data();
+            const userIcon = document.getElementById('user-icon');
+            const userImg = document.getElementById('user-img');
+            const profileTrigger = document.getElementById('profile-trigger');
+
+            // C. Update UI Profile Icon
+            if (userData.photoURL) {
+                if(userIcon) userIcon.classList.add('hidden');
+                if(userImg) {
+                    userImg.src = userData.photoURL;
+                    userImg.classList.remove('hidden');
+                }
+            }
+            
+            // D. Set redirect to profile.html
+            if(profileTrigger) profileTrigger.onclick = () => window.location.href = 'profile.html';
+        }
+    } catch (error) {
+        console.error("Error syncing profile:", error);
+    }
+}
+
+if (signupForm) {
+    signupForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const name = document.getElementById('reg-username').value;
+        const email = document.getElementById('reg-email')?.value || "";
+        const fileInput = document.getElementById('reg-pic');
+        const file = fileInput?.files[0];
+
+        if(submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fas fa-spinner animate-spin mr-2"></i> Syncing...`;
+        }
+
+        try {
+            let photoURL = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
+
+            // 1. Upload to Supabase Storage
+            if (file) {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Date.now()}.${fileExt}`;
+                const filePath = `avatars/${fileName}`;
+
+                const { error: uploadError } = await supabase.storage
+                    .from('user-content')
+                    .upload(filePath, file);
+
+                if (uploadError) throw uploadError;
+
+                const { data: urlData } = supabase.storage.from('user-content').getPublicUrl(filePath);
+                photoURL = urlData.publicUrl;
+            }
+
+            // 2. Save to Firebase Firestore
+            const newUserId = "user_" + Date.now();
+            await setDoc(doc(db, "users", newUserId), {
+                userId: newUserId,
+                name: name,
+                email: email,
+                photoURL: photoURL,
+                createdAt: new Date().toISOString()
+            });
+
+            // 3. Local session and Refresh
+            localStorage.setItem('hof_userId', newUserId);
+            window.closeSignup();
+            location.reload();
+        } catch (error) {
+            console.error("Signup failed:", error);
+            alert("Connection error. Please try again.");
+            if(submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Join Portal";
+            }
+        }
+    };
+}
+
+// Global UI helpers
+window.toggleDrawer = () => {
+    const drawer = document.getElementById('side-drawer');
+    const overlay = document.getElementById('drawer-overlay');
+    if(!drawer) return;
+    const isOpen = drawer.style.transform === 'translateX(0%)';
+    drawer.style.transform = isOpen ? 'translateX(-100%)' : 'translateX(0%)';
+    overlay?.classList.toggle('hidden');
+};
+
+window.openSignup = () => {
+    if (localStorage.getItem('hof_userId')) return; // Don't open if already logged in
+    const modal = document.getElementById('signup-popup');
+    const sheet = document.getElementById('signup-sheet');
+    if(modal) modal.classList.remove('hidden');
+    setTimeout(() => sheet?.classList.remove('translate-y-full'), 10);
+};
+
+window.closeSignup = () => {
+    const modal = document.getElementById('signup-popup');
+    const sheet = document.getElementById('signup-sheet');
+    sheet?.classList.add('translate-y-full');
+    setTimeout(() => modal?.classList.add('hidden'), 500);
+};
+
+// --- 2. PREMIUM & MODAL SYSTEM ---
 
 function hasPremiumPass() {
     const expiry = localStorage.getItem('hof_premium_expiry');
@@ -70,7 +193,7 @@ window.viewPaper = (slug, isPremium) => {
     }
 };
 
-// --- 2. UTILITY FUNCTIONS ---
+// --- 3. UTILITY FUNCTIONS ---
 
 function formatCount(num) {
     if (!num || num < 0) return 0;
@@ -94,24 +217,46 @@ function getTheme(subject, isPremium = false) {
     return { icon: 'fa-file-invoice', color: 'text-slate-400', bg: 'bg-slate-50' };
 }
 
-// --- 3. PWA & UPDATES ---
+// --- 3. PWA & INSTALLATION ---
 
 let deferredPrompt;
+
+// Listen for the browser's install prompt
 window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault(); deferredPrompt = e;
-    if(installBtn) installBtn.classList.remove('hidden');
+    // Prevent the mini-infobar from appearing on mobile
+    e.preventDefault();
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+    // Update UI notify the user they can install the PWA
+    if(installBtn) {
+        installBtn.classList.remove('hidden');
+        installBtn.style.display = 'flex'; // Ensure it's visible if using flex layout
+    }
 });
 
 if(installBtn) {
     installBtn.addEventListener('click', async () => {
         if (deferredPrompt) {
+            // Show the install prompt
             deferredPrompt.prompt();
+            // Wait for the user to respond to the prompt
             const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') installBtn.classList.add('hidden');
+            if (outcome === 'accepted') {
+                console.log('User accepted the install prompt');
+                installBtn.classList.add('hidden');
+            } else {
+                console.log('User dismissed the install prompt');
+            }
             deferredPrompt = null;
         }
     });
 }
+
+// Hide button if already installed
+window.addEventListener('appinstalled', (evt) => {
+    if(installBtn) installBtn.classList.add('hidden');
+    console.log('HOF App was installed.');
+});
 
 // --- 4. DATA RENDERING ---
 
@@ -265,6 +410,80 @@ window.toggleFavorite = async (e, slug, docId) => {
     renderGrid();
 };
 
+// --- GLOBAL DONATION POPUP LOGIC ---
+
+const injectDonationPopup = () => {
+    const popupHTML = `
+    <div id="donation-popup" class="fixed inset-0 z-[9999] flex items-center justify-center hidden p-6">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></div>
+        <div class="relative bg-white dark:bg-slate-900 w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl transform scale-90 transition-transform duration-300 border border-slate-100 dark:border-slate-800">
+            <button id="close-donation" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="text-center">
+                <div class="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-700 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-blue-500/20 rotate-3">
+                    <i class="fas fa-heart text-white text-3xl animate-pulse"></i>
+                </div>
+                <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-2 leading-tight">Keep the Mission Alive.</h3>
+                <p class="text-slate-500 dark:text-slate-400 text-xs leading-relaxed mb-8">
+                    We provide thousands of past papers for free. Your small donation helps us keep this portal running for every student.
+                </p>
+                <div class="space-y-3">
+                    <a href="donate.html" id="donate-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-lg shadow-blue-500/30 transition-all active:scale-95 flex items-center justify-center gap-3">
+                        <span class="text-[10px] uppercase tracking-widest">Support the Portal</span>
+                        <i class="fas fa-external-link-alt text-[10px]"></i>
+                    </a>
+                    <button id="maybe-later" class="text-[9px] font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-colors">
+                        Maybe Later
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+    document.body.insertAdjacentHTML('beforeend', popupHTML);
+
+    // Event Listeners
+    document.getElementById('close-donation').onclick = closeDonationPopup;
+    document.getElementById('maybe-later').onclick = closeDonationPopup;
+    document.getElementById('donate-btn').onclick = () => {
+        localStorage.setItem('donation_popup_time', new Date().getTime());
+    };
+};
+
+const closeDonationPopup = () => {
+    const popup = document.getElementById('donation-popup');
+    popup.classList.add('hidden');
+    localStorage.setItem('donation_popup_time', new Date().getTime());
+};
+
+const checkDonationPopup = () => {
+    const lastShown = localStorage.getItem('donation_popup_time');
+    const now = new Date().getTime();
+    const fourHours = 4 * 60 * 60 * 1000;
+
+    if (!lastShown || (now - lastShown) > fourHours) {
+        const popup = document.getElementById('donation-popup');
+        if (popup) {
+            popup.classList.remove('hidden');
+            setTimeout(() => popup.querySelector('.relative').classList.replace('scale-90', 'scale-100'), 10);
+        }
+    }
+};
+
+// Initialize
+if (document.readyState === 'complete') {
+    initPopup();
+} else {
+    window.addEventListener('load', initPopup);
+}
+
+function initPopup() {
+    injectDonationPopup();
+    // Wait 8 seconds after page load so it's not the first thing they see
+    setTimeout(checkDonationPopup, 8000); 
+}
+
 function updateLastSeen() {
     const lastSeen = JSON.parse(localStorage.getItem('hof_last_seen'));
     const container = document.getElementById('last-seen-container');
@@ -292,5 +511,6 @@ function updatePremiumUI() {
     } else { banner.classList.remove('hidden'); }
 }
 
-// Init
+// Initialize everything on load
+initUserSession();
 updatePremiumUI();
