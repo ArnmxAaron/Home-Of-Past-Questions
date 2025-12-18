@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Donation | HOFPQ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .input-box { @apply w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-4 text-xs font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all; }
+        label { @apply text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2 block; }
+        select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 pb-10">
+
+    <main class="max-w-xl mx-auto px-6 mt-10">
+        <header class="mb-8 flex items-center gap-4">
+            <button onclick="window.location.href='donate.html'" class="w-10 h-10 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center text-slate-400 shadow-sm">
+                <i class="fas fa-times"></i>
+            </button>
+            <h1 class="text-[11px] font-black uppercase tracking-[0.2em] text-slate-800 dark:text-white">Confirm Donation</h1>
+        </header>
+
+        <form id="confirmForm" class="space-y-6 bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-xl">
+            
+            <div>
+                <label>Full Name (For Wall of Fame)</label>
+                <input type="text" id="donorName" class="input-box" placeholder="E.G. ABDULAI SESAY" required>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label>Currency</label>
+                    <select id="currency" class="input-box pr-10" required>
+                        <option value="SLE">SLE (Sierra Leone)</option>
+                        <option value="NGN">NGN (Nigeria)</option>
+                        <option value="GHS">GHS (Ghana)</option>
+                        <option value="USD" selected>USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="ZAR">ZAR (South Africa)</option>
+                        <option value="KES">KES (Kenya)</option>
+                        <option value="LRD">LRD (Liberia)</option>
+                        <option value="ZMW">ZMW (Zambia)</option>
+                        <option value="USDT">USDT (Crypto)</option>
+                        <option value="GBP">GBP (£)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Amount Paid</label>
+                    <input type="number" id="amount" class="input-box" placeholder="0.00" step="0.01" required>
+                </div>
+            </div>
+
+            <div>
+                <label>Profile Picture (Optional)</label>
+                <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-800 p-3 rounded-xl">
+                    <input type="file" id="donorPhoto" accept="image/*" class="text-[10px] text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+                </div>
+            </div>
+
+            <div>
+                <label>Upload Receipt / Screenshot</label>
+                <label for="receipt" class="cursor-pointer border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center hover:border-blue-500 transition-all bg-slate-50/50 dark:bg-slate-800/50">
+                    <i class="fas fa-file-invoice-dollar text-2xl text-slate-300 mb-3"></i>
+                    <span id="receiptLabel" class="text-[9px] font-black text-slate-400 uppercase">Click to upload image</span>
+                    <input type="file" id="receipt" accept="image/*" class="hidden" required>
+                </label>
+            </div>
+
+            <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] active:scale-95 transition-all shadow-lg shadow-blue-500/20">
+                Submit Details
+            </button>
+        </form>
+    </main>
+
+    <div id="successModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-6">
+        <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-10 text-center max-w-xs">
+            <div class="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl shadow-lg shadow-emerald-500/30">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2 class="text-xl font-black text-slate-800 dark:text-white uppercase mb-2">Thank You!</h2>
+            <p class="text-[11px] text-slate-500 leading-relaxed mb-8">We have received your receipt. Your name will be added to the wall after verification.</p>
+            <button onclick="window.location.href='donate.html'" class="w-full bg-slate-100 dark:bg-slate-800 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-800 dark:text-white">Back to Donate</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDEuLXR4LVlz44YTI2pjdlt0cnp6f4IWEk",
+            authDomain: "hofpastquestions.firebaseapp.com",
+            projectId: "hofpastquestions",
+            storageBucket: "hofpastquestions.firebasestorage.app",
+            messagingSenderId: "287429266196",
+            appId: "1:287429266196:web:25e8efd4040cf70ac61001"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        const supabase = createClient('https://vqjnmmugwgrbpktgrfbi.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxam5tbXVnd2dyYnBrdGdyZmJpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTkwMjY0NywiZXhwIjoyMDgxNDc4NjQ3fQ.QsetwT_L4cZbxCTrkVENgy8MJYrxxNGuVqkQ6bYrsFI');
+
+        document.getElementById('receipt').addEventListener('change', e => {
+            document.getElementById('receiptLabel').innerText = e.target.files[0].name;
+        });
+
+        document.getElementById('confirmForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerText = "UPLOADING...";
+
+            try {
+                const receiptFile = document.getElementById('receipt').files[0];
+                const photoFile = document.getElementById('donorPhoto').files[0];
+                
+                // 1. Upload Receipt
+                const receiptPath = `receipts/${Date.now()}_${receiptFile.name}`;
+                const { error: rErr } = await supabase.storage.from('donations').upload(receiptPath, receiptFile);
+                if (rErr) throw rErr;
+                const { data: { publicUrl: receiptUrl } } = supabase.storage.from('donations').getPublicUrl(receiptPath);
+
+                // 2. Upload Photo
+                let photoUrl = "https://i.pravatar.cc/150?u=anonymous";
+                if (photoFile) {
+                    const photoPath = `profiles/${Date.now()}_${photoFile.name}`;
+                    await supabase.storage.from('donations').upload(photoPath, photoFile);
+                    const { data: { publicUrl: pUrl } } = supabase.storage.from('donations').getPublicUrl(photoPath);
+                    photoUrl = pUrl;
+                }
+
+                // 3. Save to Firestore (Including Currency)
+                await addDoc(collection(db, "donations"), {
+                    donorName: document.getElementById('donorName').value,
+                    currency: document.getElementById('currency').value, // SAVING SELECTED CURRENCY
+                    amount: parseFloat(document.getElementById('amount').value),
+                    receipt: receiptUrl,
+                    profilePic: photoUrl,
+                    status: "pending",
+                    createdAt: serverTimestamp()
+                });
+
+                document.getElementById('successModal').classList.remove('hidden');
+
+            } catch (err) {
+                alert("Upload failed: " + err.message);
+                btn.disabled = false;
+                btn.innerText = "SUBMIT DETAILS";
+            }
+        };
+    </script>
+</body>
+</html>

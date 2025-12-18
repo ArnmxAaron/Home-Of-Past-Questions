@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Textbooks | House of Past Questions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s ease; }
+        .hero-gradient { background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); }
+        .dark .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Pill Styles */
+        .dept-pill { 
+            @apply px-5 py-2.5 rounded-2xl bg-slate-100 text-slate-500 text-[10px] font-black uppercase transition-all cursor-pointer whitespace-nowrap border border-transparent; 
+        }
+        /* Dark mode: Unselected pills get white text */
+        .dark .dept-pill { @apply bg-slate-800 text-white border-slate-700; }
+        
+        /* Active State */
+        .active-dept { 
+            @apply bg-blue-600 text-white shadow-lg shadow-blue-200 border-blue-600; 
+        }
+        .dark .active-dept { 
+            @apply bg-blue-500 text-white shadow-none border-blue-500; 
+        }
+    </style>
+</head>
+<script>(function(s){s.dataset.zone='10344348',s.src='https://gizokraijaw.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+<body class="bg-slate-50 dark:bg-slate-950 pb-32">
+
+    <header class="hero-gradient text-white pb-20 pt-10 px-6">
+        <div class="max-w-4xl mx-auto flex items-center justify-between mb-8">
+            <button onclick="window.location.href='index.html'" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md active:scale-90 transition-all">
+                <i class="fas fa-arrow-left text-xs"></i>
+            </button>
+            <h1 class="text-[10px] font-black uppercase tracking-[0.2em]">Resource Center</h1>
+            <div class="w-10"></div>
+        </div>
+        <div class="text-center">
+            <h2 class="text-3xl font-black mb-2">Study Library</h2>
+            <p class="text-blue-100/70 text-xs font-medium uppercase tracking-widest">Premium Educational Apps</p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 -mt-10">
+        <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl p-4 border border-slate-100 dark:border-slate-800 mb-8">
+            <div class="relative mb-4">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="bookSearch" placeholder="Search for textbooks..." 
+                    class="w-full pl-11 pr-4 py-4 rounded-2xl border-none focus:ring-2 focus:ring-blue-500 text-sm bg-slate-50 dark:bg-slate-800 dark:text-white outline-none">
+            </div>
+
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                <button onclick="filterDept('all')" class="dept-pill active-dept" id="dept-all">All</button>
+                <button onclick="filterDept('science')" class="dept-pill" id="dept-science">Science</button>
+                <button onclick="filterDept('arts')" class="dept-pill" id="dept-arts">Arts</button>
+                <button onclick="filterDept('commercial')" class="dept-pill" id="dept-commercial">Commercial</button>
+                <button onclick="filterDept('general')" class="dept-pill" id="dept-general">General</button>
+            </div>
+        </div>
+
+        <div id="book-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="animate-pulse bg-white dark:bg-slate-900 h-32 rounded-[2.5rem]"></div>
+            <div class="animate-pulse bg-white dark:bg-slate-900 h-32 rounded-[2.5rem]"></div>
+        </div>
+    </main>
+
+    <script type="module" src="textbooks.js"></script>
+</body>
+</html>

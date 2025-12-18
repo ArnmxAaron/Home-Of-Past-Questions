@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | House of Past Questions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s ease; }
+        .hero-gradient { background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); }
+        .dark .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+        .feature-card { @apply bg-slate-50 dark:bg-slate-800/50 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800/50; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 pb-20 transition-colors">
+
+    <header class="hero-gradient pt-12 pb-24 px-6 text-white relative">
+        <div class="max-w-2xl mx-auto flex items-center justify-between relative z-10">
+            <button onclick="window.history.back()" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md active:scale-90 transition-all">
+                <i class="fas fa-chevron-left text-xs"></i>
+            </button>
+            <h1 class="text-[10px] font-black uppercase tracking-[0.2em]">Our Story</h1>
+            <div class="w-10"></div>
+        </div>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-6 -mt-16 relative z-20">
+        <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl p-8 md:p-12 border border-slate-100 dark:border-slate-800 transition-colors">
+            
+            <div class="text-center mb-12">
+                <div class="w-20 h-20 bg-blue-600 dark:bg-blue-500 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-blue-200 dark:shadow-none">
+                    <i class="fas fa-university text-3xl text-white"></i>
+                </div>
+                <h2 class="text-3xl font-black text-slate-800 dark:text-white leading-tight">House of Past Questions</h2>
+                <p class="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-[0.3em] mt-3">Empowering Students Worldwide</p>
+            </div>
+
+            <div class="mb-12">
+                <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">The Mission</h3>
+                <p class="text-sm text-slate-600 dark:text-white leading-loose">
+                    House of Past Questions was built with a single goal: to make high-quality educational resources accessible to every student. We bridge the gap between hard work and success by providing structured, easy-to-access past questions, textbooks, and interactive quizzes.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 mb-12">
+                <div class="feature-card">
+                    <i class="fas fa-book-reader text-blue-600 mb-4 text-xl"></i>
+                    <h4 class="text-sm font-black text-slate-800 dark:text-white mb-2 uppercase tracking-tighter">Verified Content</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Access a massive library of WASSCE, BECE, and other standard exam questions updated regularly.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-mobile-alt text-emerald-500 mb-4 text-xl"></i>
+                    <h4 class="text-sm font-black text-slate-800 dark:text-white mb-2 uppercase tracking-tighter">Offline Ready</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Download recommended textbooks and apps directly to your device for studying anywhere, anytime.</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 dark:bg-blue-600 rounded-[2rem] p-8 text-white relative overflow-hidden">
+                <div class="relative z-10">
+                    <h4 class="text-[10px] font-black uppercase tracking-widest mb-2 opacity-70">The Architect</h4>
+                    <h5 class="text-xl font-black mb-4">Developer Tee</h5>
+                    <p class="text-xs text-blue-100/80 leading-relaxed mb-6">
+                        Passionate about building digital solutions that solve real-world educational problems. Creating tools that make learning feel less like a chore and more like an achievement.
+                    </p>
+                    <div class="flex gap-4">
+                        <button class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md">
+                            <i class="fab fa-github text-xs"></i>
+                        </button>
+                        <button class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md">
+                            <i class="fab fa-twitter text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <i class="fas fa-code absolute -right-4 -bottom-4 text-8xl opacity-10 rotate-12"></i>
+            </div>
+
+            <button onclick="window.history.back()" 
+                class="w-full mt-10 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white text-[10px] font-black py-5 rounded-2xl uppercase tracking-[0.2em] active:scale-95 transition-all">
+                Close About
+            </button>
+        </div>
+
+        <p class="text-center text-[9px] font-black text-slate-300 dark:text-slate-700 uppercase tracking-[0.3em] mt-12 mb-8">
+            v2.0.4 Built for Excellence
+        </p>
+    </main>
+
+</body>
+</html>

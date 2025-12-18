@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | House of Past Questions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s ease; }
+        .hero-gradient { background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); }
+        .dark .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 pb-24 transition-colors">
+
+    <header class="hero-gradient pt-12 pb-24 px-6 text-white relative">
+        <div class="max-w-md mx-auto flex items-center justify-between relative z-10">
+            <button onclick="window.location.href='index.html'" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md active:scale-90 transition-all">
+                <i class="fas fa-chevron-left text-xs"></i>
+            </button>
+            <h1 class="text-[10px] font-black uppercase tracking-[0.2em]">Student Dashboard</h1>
+            <button id="logout-btn" class="text-[10px] font-black text-red-300 dark:text-red-400 uppercase tracking-widest">Sign Out</button>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-6 -mt-16 relative z-20">
+        
+        <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl p-8 border border-slate-100 dark:border-slate-800 transition-colors">
+            <div class="flex flex-col items-center -mt-20 mb-6">
+                <div class="relative">
+                    <div class="w-24 h-24 rounded-full border-4 border-white dark:border-slate-900 shadow-lg bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                        <img id="display-pic" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                        <div id="pic-loader" class="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800">
+                            <i class="fas fa-user text-slate-300 dark:text-slate-600 text-3xl"></i>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-1 right-1 bg-emerald-500 w-5 h-5 rounded-full border-2 border-white dark:border-slate-900"></div>
+                </div>
+                <h2 id="display-name" class="text-xl font-black text-slate-800 dark:text-white mt-4 capitalize">Loading...</h2>
+                <p id="display-email" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">---</p>
+            </div>
+
+            <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl mb-6 border border-slate-100 dark:border-slate-700/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center text-xs">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    <span class="text-[10px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-widest">Dark Mode</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="dark-mode-toggle" class="sr-only peer">
+                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
+                </label>
+            </div>
+
+            <hr class="border-slate-50 dark:border-slate-800 mb-6">
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-50 dark:bg-slate-800/30 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/50">
+                    <span class="text-[8px] font-black text-slate-400 uppercase block mb-1">Status</span>
+                    <span id="display-status" class="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase">Standard</span>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-800/30 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/50">
+                    <span class="text-[8px] font-black text-slate-400 uppercase block mb-1">Joined</span>
+                    <span id="display-date" class="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase">...</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="mt-10">
+            <div class="flex items-center justify-between mb-4 px-2">
+                <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                    <i class="fas fa-bookmark text-blue-600"></i> My Saved Papers
+                </h3>
+                <span id="fav-count" class="bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-[9px] font-black px-2 py-0.5 rounded-full">0</span>
+            </div>
+
+            <div id="saved-papers-list" class="space-y-3">
+                <div id="papers-loader" class="space-y-3">
+                    <div class="w-full h-16 bg-white dark:bg-slate-900 rounded-3xl animate-pulse"></div>
+                    <div class="w-full h-16 bg-white dark:bg-slate-900 rounded-3xl animate-pulse"></div>
+                </div>
+
+                <div id="empty-favs" class="hidden text-center py-12 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800">
+                    <i class="far fa-heart text-slate-200 dark:text-slate-700 text-3xl mb-3"></i>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-8">No papers saved yet.</p>
+                </div>
+            </div>
+        </section>
+
+        <div id="premium-card" class="mt-8 bg-slate-900 dark:bg-indigo-950 rounded-[2.5rem] p-8 text-white relative overflow-hidden hidden">
+            <div class="absolute -right-4 -top-4 opacity-10 text-7xl text-white rotate-12">
+                <i class="fas fa-crown"></i>
+            </div>
+            <h4 class="text-sm font-black mb-1">Unlock Premium Papers</h4>
+            <p class="text-[10px] text-slate-400 dark:text-indigo-300 font-bold mb-5">Get instant access to 2024 & 2025 WASSCE/BECE Questions.</p>
+            <button onclick="window.location.href='index.html'" class="bg-blue-600 dark:bg-indigo-500 text-white text-[9px] font-black px-6 py-3 rounded-xl uppercase tracking-widest shadow-lg active:scale-95 transition-all">
+                Upgrade Now
+            </button>
+        </div>
+
+        <p class="text-center text-[9px] font-black text-slate-300 dark:text-slate-700 uppercase tracking-[0.3em] mt-12 mb-8">
+            House of Past Questions v2.0
+        </p>
+    </main>
+
+    <script type="module" src="profile.js"></script>
+</body>
+</html>

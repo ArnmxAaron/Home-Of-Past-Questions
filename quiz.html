@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Quiz | House of Past Questions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s ease; }
+        .hero-gradient { background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); }
+        .dark .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 min-h-screen flex flex-col transition-colors">
+
+    <header class="hero-gradient pt-12 pb-24 px-6 text-white relative">
+        <div class="max-w-md mx-auto flex items-center justify-between relative z-10">
+            <button onclick="window.location.href='index.html'" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md active:scale-90 transition-all">
+                <i class="fas fa-chevron-left text-xs"></i>
+            </button>
+            <h1 class="text-[10px] font-black uppercase tracking-[0.2em]">Quiz Portal</h1>
+            <div class="w-10"></div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-6 -mt-16 relative z-20 flex-1 w-full">
+        <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl p-10 border border-slate-100 dark:border-slate-800 text-center transition-colors">
+            
+            <div class="mb-8 flex justify-center">
+                <div class="w-24 h-24 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center float-animation">
+                    <i class="fas fa-tools text-4xl text-blue-600 dark:text-blue-400"></i>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-4">Under Construction</h2>
+            
+            <p class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-relaxed mb-8">
+                We are building a powerful quiz system to help you track your progress. <br>
+                <span class="text-blue-600 dark:text-blue-400">Please check back soon!</span>
+            </p>
+
+            <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden mb-10">
+                <div class="bg-blue-600 h-full w-3/4 rounded-full"></div>
+            </div>
+
+            <button onclick="window.location.href='index.html'" 
+                class="w-full bg-slate-900 dark:bg-blue-600 text-white text-[10px] font-black py-4 rounded-2xl uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all">
+                Return to Home
+            </button>
+        </div>
+
+        <p class="text-center text-[9px] font-black text-slate-300 dark:text-slate-700 uppercase tracking-[0.3em] mt-12 mb-8">
+            House of Past Questions v2.0
+        </p>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | House of Past Questions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s ease; }
+        .hero-gradient { background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); }
+        .dark .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+        
+        /* 1. FORCED DARK MODE FIX: This targets every text tag inside the dark policy card */
+        .dark .policy-card h2, 
+        .dark .policy-card p, 
+        .dark .policy-card span { 
+            color: #ffffff !important; 
+        }
+
+        .policy-card h3 { 
+            @apply text-xs font-black text-blue-600 dark:!text-blue-400 uppercase tracking-widest mt-10 mb-4; 
+        }
+        
+        .policy-card p { 
+            @apply text-sm text-slate-600 leading-loose mb-6; 
+        }
+    </style>
+</head>
+<script>(function(s){s.dataset.zone='10344340',s.src='https://gizokraijaw.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+<body class="bg-slate-50 dark:bg-slate-950 pb-20 transition-colors">
+
+    <header class="hero-gradient pt-12 pb-24 px-6 text-white relative">
+        <div class="max-w-2xl mx-auto flex items-center justify-between relative z-10">
+            <button onclick="window.history.back()" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md active:scale-90 transition-all">
+                <i class="fas fa-chevron-left text-xs"></i>
+            </button>
+            <h1 class="text-[10px] font-black uppercase tracking-[0.2em] dark:!text-white">Legal Information</h1>
+            <div class="w-10"></div>
+        </div>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-6 -mt-16 relative z-20">
+        <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl p-8 md:p-12 border border-slate-100 dark:border-slate-800 transition-colors policy-card">
+            
+            <div class="text-center mb-12">
+                <div class="w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-shield-alt text-2xl text-blue-600 dark:text-blue-400"></i>
+                </div>
+                <h2 class="text-2xl font-black text-slate-800 dark:!text-white">Privacy Policy</h2>
+                <p class="text-[10px] font-bold text-slate-400 dark:!text-white/60 uppercase tracking-widest mt-2">Last Updated: 2025</p>
+            </div>
+
+            <section>
+                <h3>1. Our Services</h3>
+                <p>House of Past Questions provides educational resources including WASSCE/BECE past questions, textbook recommendation links to the Google Play Store, and interactive study quizzes. Our goal is to simplify exam preparation for students.</p>
+            </section>
+
+            <section>
+                <h3>2. Information We Collect</h3>
+                <p>To provide a personalized experience, we collect basic information such as your name, email address, and profile picture via Google Authentication. We also store your "saved papers" and premium subscription status locally on your device and in our secure database.</p>
+            </section>
+
+            <section>
+                <h3>3. Third-Party Links</h3>
+                <p>Our "Download Textbooks" section contains links to third-party applications on the Google Play Store. We are not responsible for the privacy practices or content of these external applications.</p>
+            </section>
+
+            <section>
+                <h3>4. Data Security</h3>
+                <p>We use industry-standard encryption to ensure that your data remains private and is only accessible by you. We do not sell or share your personal information with third-party advertisers.</p>
+            </section>
+
+            <div class="mt-16 pt-8 border-t border-slate-50 dark:border-slate-800 text-center">
+                <p class="text-[11px] font-bold text-slate-500 dark:!text-white uppercase tracking-[0.1em] mb-2">
+                    Developed with ❤️ by
+                </p>
+                <span class="text-blue-600 dark:!text-blue-400 text-sm font-black uppercase tracking-tighter">Developer Tee</span>
+            </div>
+
+            <button onclick="window.history.back()" 
+                class="w-full mt-10 bg-slate-900 dark:bg-blue-600 text-white text-[10px] font-black py-5 rounded-2xl uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all">
+                I Understand
+            </button>
+        </div>
+
+        <p class="text-center text-[9px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-[0.3em] mt-12 mb-8">
+            House of Past Questions v2.0
+        </p>
+    </main>
+
+</body>
+</html>
