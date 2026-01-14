@@ -6,7 +6,7 @@ let allPapers = [];
 let currentPage = 0;
 let isFavoritesOnly = false;
 const itemsPerPage = 8;
-const REWARD_AD_URL = "https://otieu.com/4/10338215"; 
+const REWARD_AD_URL = "https://otieu.com/4/10461207"; 
 const userId = localStorage.getItem('hof_userId');
 
 // --- ELEMENTS ---
@@ -514,3 +514,4 @@ function updatePremiumUI() {
 // Initialize everything on load
 initUserSession();
 updatePremiumUI();
+
